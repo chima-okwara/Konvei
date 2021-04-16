@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <Wire.h>
 #include <LiquidCrystal.h>
-#include "sensors.hpp"
+#include <sensors.hpp>
 
 //Pins for LCD screen:
 LiquidCrystal lcd (7,8,9,10,11,12);
