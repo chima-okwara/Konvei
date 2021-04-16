@@ -8,12 +8,12 @@
 //Daniel Ogunlolu, AmazingTech(R)
 //c. 2018
 ///////////////////////////////////////////////////////////////////////////////
-#include "Arduino.h"
-#include "LiquidCrystal.h"
-#include "Wire.h"
+#include <Arduino.h>
+#include <LiquidCrystal.h>
+#include <Wire.h>
 
-LiquidCrystal lcd (7,8,9,10,11,12); //Original project used LCD 20*4
-                                    //We are using LCD 1602
+LiquidCrystal lcd (7,8,9,10,11,12);
+
 
 //////////////Pins for all electronic devices://///////////////////////////////
 //Ultrasonic pins//////////////////////////////////////////////////////////////
