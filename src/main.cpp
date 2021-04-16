@@ -15,23 +15,23 @@
 //Pins for LCD screen:
 LiquidCrystal lcd (7,8,9,10,11,12);
 
-//Buzzer pin:
-const uint8_t buzzer = 15;
-
-//Infrared sensors:
+//Infrared sensor:
 irSensor ir(5, LOW);
 
 //Ultrasonic sensor:
 ultrasonicSensor ultra(13, 14);
+
+//Buzzer pin:
+const uint8_t buzzer = 15;
 
 //Motor pin:
 const uint8_t motor = 5;
 
 //Variables for calculating object height:
 float itemDistance = 0.0;     //Distance between the item and the ultrasonic sensor.
-float refHeight = 30.0;   //Distance between the conveyor floor and the ultrasonic sensor.
-float itemHeight = 0.0;   //Item calculated height i.e   refHeight-itemDistance.
-uint32_t totalCount = 0l;    //Count of accepted objects.
+float refHeight = 30.0;       //Distance between the conveyor floor and the ultrasonic sensor.
+float itemHeight = 0.0;       //Item calculated height i.e   refHeight-itemDistance.
+uint32_t totalCount = 0l;     //Count of accepted objects.
 
 
 void setup();
@@ -48,8 +48,7 @@ void setup()
 
   //Pin connected to motor
   pinMode(motor,OUTPUT);
-
-   digitalWrite(motor,HIGH);
+  digitalWrite(motor,HIGH);
 
 
   //To deactivate LED on the Arduino Uno
@@ -70,12 +69,13 @@ void setup()
   {
     lcd.scrollDisplayLeft();
     delay(200);
-  }  delay(300);
+  }
+  delay(300);
 
   lcd.clear();
 
   lcd.setCursor(0, 0);
-  lcd.println("Starting motor...");
+  lcd.print("Starting motor...");
   digitalWrite(motor,LOW);
   lcd.clear();
 
@@ -83,7 +83,7 @@ void setup()
   lcd.setCursor(0,1);
   lcd.print("H:    ");
 
-  //No is for the counting of objects
+  //No is for counting permitted items.
   lcd.setCursor(7,1);
   lcd.print("No:    ");
 }
