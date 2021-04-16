@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //*FILE NAME:       main.cpp
 //*FILE DESC:       Source file for Konvei.
-//*FILE VERSION:    0.1.0
+//*FILE VERSION:    0.1.1
 //*FILE AUTHOR:     Chimaroke Okwara
 //*LAST MODIFIED:   Friday, 16 April 2021 11:51
 //*LICENSE:         MIT License
@@ -33,10 +33,7 @@ float refHeight {30.0};       //Distance between the conveyor floor and the ultr
 float itemHeight {0.0};       //Item calculated height i.e   refHeight-itemDistance.
 uint32_t totalCount {0l};     //Count of accepted objects.
 
-
-void setup();
-void loop();
-
+const float allowedHeight {20.0};   //Allowed height for items.
 
 void setup()
 {
@@ -55,7 +52,7 @@ void setup()
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite (LED_BUILTIN, LOW);
 
-  //Print Welcome Message for
+  //Print Welcome Message
   lcd.setCursor(0, 0);
   lcd.print("Eichen(R)");
   delay(3000);
@@ -104,7 +101,7 @@ void loop()
       lcd.setCursor(3,1);
       lcd.print(itemHeight);
 
-      if ((itemHeight >= 20.0) && ir.detect()) //if the object height is up to or equals 20cm
+      if ((itemHeight >= allowedHeight))
       {
          ++totalCount;
          lcd.setCursor(11,1);
@@ -118,8 +115,7 @@ void loop()
 
       }
 
-      else if ((itemHeight < 20.0) && ir.detect())
-      //if the object height is less than 20cm and the object is still in front of the sensors
+      else
       {
 
             lcd.setCursor(9,1);
@@ -130,7 +126,7 @@ void loop()
             digitalWrite(buzzer, HIGH); //start buzzer
 
             while (ir.detect())      //As long as the item is not removed...
-              delay(100);             //...do nothing.
+              delay(10);             //...do nothing.
 
       }
 
@@ -143,5 +139,5 @@ void loop()
 
 
   else                    //When no object is detected...
-    delay(100);           //...do nothing.
+    delay(10);           //...do nothing.
 }
