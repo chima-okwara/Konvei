@@ -10,6 +10,7 @@
 #include <LiquidCrystal.h>
 #include <Wire.h>
 #include <sensorLib.hpp>
+#include <stdint.h>
 
 //Pins for LCD screen:
 LiquidCrystal lcd (7,8,9,10,11,12);
@@ -27,10 +28,10 @@ ultrasonicSensor ultra(13, 14);
 const uint8_t motor = 5;
 
 //Variables for calculating object height:
-float itemDistance;     //Distance between the item and the ultrasonic sensor.
-float refHeight = 30;   //Distance between the conveyor floor and the ultrasonic sensor.
-float itemHeight = 0;   //Item calculated height i.e   refHeight-itemDistance.
-long totalCount = 0;    //Count of accepted objects.
+float itemDistance = 0.0;     //Distance between the item and the ultrasonic sensor.
+float refHeight = 30.0;   //Distance between the conveyor floor and the ultrasonic sensor.
+float itemHeight = 0.0;   //Item calculated height i.e   refHeight-itemDistance.
+uint32_t totalCount = 0l;    //Count of accepted objects.
 
 
 void setup();
@@ -105,7 +106,7 @@ void loop()
 
       if ((itemHeight >= 20.0) && ir.detect()) //if the object height is up to or equals 20cm
       {
-         totalCount++;
+         ++totalCount;
          lcd.setCursor(11,1);
          lcd.print(totalCount);
          delay (1000);
@@ -117,7 +118,7 @@ void loop()
 
       }
 
-      else if ((itemHeight < 20.0) && ir.detect())  
+      else if ((itemHeight < 20.0) && ir.detect())
       //if the object height is less than 20cm and the object is still in front of the sensors
       {
 
