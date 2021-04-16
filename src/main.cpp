@@ -16,7 +16,7 @@
 LiquidCrystal lcd (7,8,9,10,11,12);
 
 //Infrared sensor:
-irSensor ir(5, LOW);
+irSensor ir(5);
 
 //Ultrasonic sensor:
 ultrasonicSensor ultra(13, 14);
