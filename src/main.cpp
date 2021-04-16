@@ -1,94 +1,74 @@
-///////////////////////////////////////////////////////////////////////////////
-//Design and construction of Belt Conveyor
-//With Automatic Foreign Body Detection and Alert SYSTEM
-//Written by Chima Okwara, Eichen(R)
-//c. March 2019
-//***************************************************************************//
-//Acknowledgement:
-//Daniel Ogunlolu, AmazingTech(R)
-//c. 2018
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//*FILE NAME:       main.cpp
+//*FILE DESC:       Source file for Konvei.
+//*FILE VERSION:    0.1.0
+//*FILE AUTHOR:     Chimaroke Okwara
+//*LAST MODIFIED:   
+//*LICENSE:         MIT License
+////////////////////////////////////////////////////////////////////////////////////////////////////
 #include <Arduino.h>
 #include <LiquidCrystal.h>
 #include <Wire.h>
+#include <sensorLib.hpp>
 
+//Pins for LCD screen:
 LiquidCrystal lcd (7,8,9,10,11,12);
 
+//Buzzer pin:
+const uint8_t buzzer = 15;
 
-//////////////Pins for all electronic devices://///////////////////////////////
-//Ultrasonic pins//////////////////////////////////////////////////////////////
-const int echo = 13;////////////////////////////////////////////////////////////
-const int trig = 14;////////////////////////////////////////////////////////////
-/*****************************************************************************/
-//Buzzer pin///////////////////////////////////////////////////////////////////
-const int buzzer = 15;//////////////////////////////////////////////////////////
-/*****************************************************************************/
-//Infrared sensor pins/////////////////////////////////////////////////////////
-const int sensor1 = 4; //1st infrared sensor, for sensing presence of item//////
-const int sensor2 = 6; //2nd infrared sensor, for sensing removal of item///////
-/*****************************************************************************/
-//Motor pin
-const int motor = 5;////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
+//Infrared sensors:
+irSensor ir1(5, LOW), ir2(6, LOW);
 
+//Ultrasonic sensor
+ultrasonicSensor ultra(13, 14);
 
-//////////////Variables for calculating object height///////////////////////////
-float itemDistance; //distance between the item and the ultrasonic//////////////
-long duration; //sound wave goes from ultrasonic sensor to item, to and fro/////
-float height = 0;// object calculated height i.e   refHeight minus itemDistance/
-float refHeight = 30;  //distance between the conveyor floor and the ultrasonic/
-int totalCount = 0;  //count of objects on conveyor/////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+//Motor pin:
+const uint8_t motor = 5;
+
+//Variables for calculating object height:
+float itemDistance;     //Distance between the item and the ultrasonic sensor
+float refHeight = 30;   //Distance between the conveyor floor and the ultrasonic sensor
+float itemHeight = 0;   //Item calculated height i.e   refHeight-itemDistance
+long totalCount = 0;    //Count of accepted objects.
+
+void setup();
+void loop();
+
 
 void setup()
 {
   //Initialise LCD screen
   lcd.begin(16, 2);
 
-////Set modes for all devices///////////////////////////////////////////////////
   //Pin connected to buzzer
   pinMode(buzzer,OUTPUT);
 
-  //Ultrasonic sensor pins
-  pinMode(trig,OUTPUT);
-  pinMode(echo,INPUT);
-
   //Pin connected to motor
   pinMode(motor,OUTPUT);
-//  digitalWrite(motor,HIGH); //to be edited later
 
-  //Pin connected to infrared sensors
-  pinMode(sensor1,INPUT);
-  pinMode(sensor2,INPUT);
+  //  digitalWrite(motor,HIGH);
 
 
-  //To deactivate LED on the Arduino Uno////////////////////////////////////////
+  //To deactivate LED on the Arduino Uno
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite (LED_BUILTIN, LOW);
-  //////////////////////////////////////////////////////////////////////////////
 
-  //Print Welcome Message for 3 sec/////////////////////////////////////////////
+  //Print Welcome Message for 3 sec
   lcd.setCursor(0, 0);
   lcd.print("Eichen(R)");
   delay(3000);
-
-
-//  lcd.setCursor(0, 0);
-//  lcd.print(" PN-CTE-16-0369 ");
-//
-//  lcd.setCursor(0, 1);
-//  lcd.print(" PN-CTE-16-0384 ");
-//  delay(3000);
-
-
 
   lcd.clear();
 
   lcd.setCursor(0, 0);
 
   lcd.print("CONVEYOR BELT SYSTEM WITH FOREIGN BODY DETECTION AND ALERT");
-  lcd.scrollDisplayLeft();
-  delay(3000);
+  for(size_t i{}; i<42; ++i)
+  {
+    lcd.scrollDisplayLeft();
+    delay(200);
+  }  delay(3000);
 
   lcd.clear();
 
@@ -106,56 +86,29 @@ void setup()
   //No is for the counting of objects
   lcd.setCursor(7,1);
   lcd.print("No:    ");
-
-
-
-/// These were optimised for a 20x4 display.
-//  lcd.setCursor(0,1);
-//  lcd.print("HEIGHT:   ");
-//  lcd.setCursor(0,1);
-//  lcd.print("COUNT:   0");
-// lcd.setCursor(0,1);
-// lcd.print("STATUS:  WAITING...");
 }
 
 
 
 void loop()
 {
-  if (digitalRead(sensor1)==LOW) //when an object is detected by the irsenor1
+  if (ir1.detect()) //when an object is detected by the irsenor1
   {
-//      delay(1000);
-//      wait for some second before calculating
-//      height.....for object to reach like center of sensors
-      digitalWrite(trig, LOW);
-      delay(100);
-      digitalWrite(trig, HIGH);
-      delay(1000);
-      digitalWrite(trig, LOW);
-
-      duration = pulseIn (echo, HIGH);
-      itemDistance = (duration*340)/20000;
-      height   = refHeight - itemDistance;
+      itemDistance = ultra.getDistance_cm();
+      itemHeight   = refHeight - itemDistance;
 
       //now display object height
 
       lcd.setCursor(0,1);
       lcd.print("H:    ");
       lcd.setCursor(3,1);
-      lcd.print(height);
+      lcd.print(itemHeight);
 
-      if ( height >= 20) //if the object height is up to or equals 20cm
-      {   //valid height is 20 or more
+      if ( itemHeight >= 20.0) //if the object height is up to or equals 20cm
+      {
          totalCount++;
          lcd.setCursor(11,1);
          lcd.print(totalCount);
-//         lcd.setCursor(9,1);
-//         lcd.print("ACCEPTED..");
-
-
-         //time for object to stay under ultrasonic sensor...
-         //adjust later depending on motor speed
-
          delay (1000);
 
          lcd.setCursor(0,0);
@@ -176,28 +129,19 @@ void loop()
             lcd.print("STOPPED");
             digitalWrite(buzzer, HIGH); //start buzzer
 
-            while (digitalRead(sensor2)==LOW)
-            delay(100);
+            while (ir2.detect())      //As long as the item is not removed...
+              delay(100);             //...do nothing.
 
       }
 
-         digitalWrite(buzzer,LOW); //off buzzer
-         digitalWrite(motor, LOW); //start motor back
+         digitalWrite(buzzer,LOW);
+         digitalWrite(motor, LOW);
 
-
-//         lcd.setCursor(9,0);
-//         lcd.print("MOVING ");
-//         lcd.setCursor(0,1);
-//         lcd.print("STATUS:  WAITING...");
-//         lcd.setCursor(0,1);
-//         lcd.print("HEIGHT:      CM");
   }
 
 
 
 
-  else //when no object is detected
-  {
-    delay(100);
-  }
+  else                    //When no object is detected...
+    delay(100);           //...do nothing.
 }
