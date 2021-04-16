@@ -13,25 +13,25 @@
 #include <sensors.hpp>
 
 //Pins for LCD screen:
-LiquidCrystal lcd (7,8,9,10,11,12);
+LiquidCrystal lcd {7,8,9,10,11,12};
 
 //Infrared sensor:
-irSensor ir(5);
+irSensor ir {5};
 
 //Ultrasonic sensor:
-ultrasonicSensor ultra(13, 14);
+ultrasonicSensor ultra {13, 14};
 
 //Buzzer pin:
-const uint8_t buzzer = 15;
+const uint8_t buzzer {15};
 
 //Motor pin:
-const uint8_t motor = 5;
+const uint8_t motor {5};
 
 //Variables for calculating object height:
-float itemDistance = 0.0;     //Distance between the item and the ultrasonic sensor.
-float refHeight = 30.0;       //Distance between the conveyor floor and the ultrasonic sensor.
-float itemHeight = 0.0;       //Item calculated height i.e   refHeight-itemDistance.
-uint32_t totalCount = 0l;     //Count of accepted objects.
+float itemDistance {0.0};     //Distance between the item and the ultrasonic sensor.
+float refHeight {30.0};       //Distance between the conveyor floor and the ultrasonic sensor.
+float itemHeight {0.0};       //Item calculated height i.e   refHeight-itemDistance.
+uint32_t totalCount {0l};     //Count of accepted objects.
 
 
 void setup();

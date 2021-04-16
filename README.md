@@ -4,6 +4,6 @@
 
 ***
 
-This project makes use of an Arduino Uno R3 to control a conveyor belt based on the height of the objects placed on the belt, and displays thei number of accepted objects on a 1602 LCD screen.
+This project makes use of an Arduino Uno R3 to control a conveyor belt based on the height of the objects placed on the belt, and displays the number of accepted objects on a 1602 LCD screen.
 
 ***
