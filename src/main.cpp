@@ -4,7 +4,7 @@
 //*FILE VERSION:    0.1.1
 //*FILE AUTHOR:     Chimaroke Okwara
 //*LAST MODIFIED:   Friday, 16 April 2021 11:51
-//*LICENSE:         MIT License
+//*LICENSE:         Academic Free License
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 #include <Arduino.h>
 #include <stdint.h>
@@ -37,8 +37,10 @@ const float allowedHeight {20.0};   //Allowed height for items.
 
 void setup()
 {
-  //Initialise LCD screen:
+  //Initialise LCD screen and sensors:
   lcd.begin(16, 2);
+  ir.begin();
+  ultra.begin();
 
   //Pin connected to buzzer:
   pinMode(buzzer,OUTPUT);
