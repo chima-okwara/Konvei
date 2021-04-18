@@ -91,49 +91,48 @@ void setup()
 
 void loop()
 {
-  if (ir.detect()) //when an object is detected by the irsenor1
+  if (ir.detect()) //when an object is detected by the irsenor...
   {
-      itemDistance = ultra.getDistance_cm();
-      itemHeight   = refHeight - itemDistance;
+    digitalWrite(motor, LOW);
+    itemDistance = ultra.getDistance_cm();
+    itemHeight   = refHeight - itemDistance;
 
-      //now display object height
+    //now display object height
 
-      lcd.setCursor(0,1);
-      lcd.print("H:    ");
-      lcd.setCursor(3,1);
-      lcd.print(itemHeight);
+    lcd.setCursor(3,1);
+    lcd.print(itemHeight);
 
-      if ((itemHeight >= allowedHeight))
-      {
-         ++totalCount;
-         lcd.setCursor(11,1);
-         lcd.print(totalCount);
-         delay (1000);
+    if ((itemHeight >= allowedHeight))
+    {
+       ++totalCount;
+       lcd.setCursor(11,1);
+       lcd.print(totalCount);
+       delay (1000);
 
-         lcd.setCursor(0,0);
-         lcd.print("STATUS:  WAITING...");
-         lcd.setCursor(0,1);
-         lcd.print("HEIGHT:      CM");
+       lcd.setCursor(0,0);
+       lcd.print("STATUS:  WAITING...");
+       lcd.setCursor(0,1);
+       lcd.print("HEIGHT:      CM");
 
-      }
+    }
 
-      else
-      {
+    else
+    {
 
-            lcd.setCursor(9,1);
-            lcd.print("REJECTED..");
-            digitalWrite(motor, HIGH); //stop motor
-            lcd.setCursor(9,0);
-            lcd.print("STOPPED");
-            digitalWrite(buzzer, HIGH); //start buzzer
+          lcd.setCursor(9,1);
+          lcd.print("REJECTED..");
+          digitalWrite(motor, HIGH); //stop motor
+          lcd.setCursor(9,0);
+          lcd.print("STOPPED");
+          digitalWrite(buzzer, HIGH); //start buzzer
 
-            while (ir.detect())      //As long as the item is not removed...
-              delay(10);             //...do nothing.
+          while (ir.detect())      //As long as the item is not removed...
+            ;             //...do nothing.
 
-      }
+    }
 
-         digitalWrite(buzzer,LOW);
-         digitalWrite(motor, LOW);
+       digitalWrite(buzzer,LOW);
+       digitalWrite(motor, LOW);
 
   }
 
@@ -141,5 +140,5 @@ void loop()
 
 
   else                    //When no object is detected...
-    delay(10);           //...do nothing.
+    ;                     //...do nothing.
 }
