@@ -11,6 +11,7 @@
 #include <Wire.h>
 #include <LiquidCrystal.h>
 #include <sensors.hpp>
+#include <pincontrol.hpp>
 
 //Pins for LCD screen:
 LiquidCrystal lcd {7,8,9,10,11,12};
@@ -22,10 +23,10 @@ irSensor ir {5};
 ultrasonicSensor ultra {13, 14};
 
 //Buzzer pin:
-const uint8_t buzzer {15};
+outputPin buzzer {15};
 
 //Motor pin:
-const uint8_t motor {5};
+outputPin motor {5};
 
 //Variables for calculating object height:
 float itemDistance {0.0};     //Distance between the item and the ultrasonic sensor.
@@ -41,13 +42,9 @@ void setup()
   lcd.begin(16, 2);
   ir.begin();
   ultra.begin();
-
-  //Pin connected to buzzer:
-  pinMode(buzzer,OUTPUT);
-
-  //Pin connected to motor
-  pinMode(motor,OUTPUT);
-  digitalWrite(motor,HIGH);
+  buzzer.set();
+  motor.set();
+  motor.write(1);
 
 
   //To deactivate LED on the Arduino Uno
@@ -75,7 +72,7 @@ void setup()
 
   lcd.setCursor(0, 0);
   lcd.print("Starting motor...");
-  digitalWrite(motor,LOW);
+  motor.write(0);
   lcd.clear();
 
   //H stands for HEIGHT
@@ -93,7 +90,7 @@ void loop()
 {
   if (ir.detect()) //when an object is detected by the irsenor...
   {
-    digitalWrite(motor, LOW);
+    motor.write(0);
     itemDistance = ultra.getDistance_cm();
     itemHeight   = refHeight - itemDistance;
 
@@ -121,18 +118,18 @@ void loop()
 
           lcd.setCursor(9,1);
           lcd.print("REJECTED..");
-          digitalWrite(motor, HIGH); //stop motor
+          motor.write(1); //stop motor
           lcd.setCursor(9,0);
           lcd.print("STOPPED");
-          digitalWrite(buzzer, HIGH); //start buzzer
+          buzzer.write(1); //start buzzer
 
           while (ir.detect())      //As long as the item is not removed...
             ;             //...do nothing.
 
     }
 
-       digitalWrite(buzzer,LOW);
-       digitalWrite(motor, LOW);
+       buzzer.write(0);
+       motor.write(0);
 
   }
 
